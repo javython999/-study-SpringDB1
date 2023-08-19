@@ -5,6 +5,7 @@ import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 /**
  * JDBC - DriverManager 사용
@@ -15,8 +16,6 @@ import java.sql.*;
 
         Connection con = null;
         PreparedStatement pstmt = null;
-
-
 
         try {
             con = getConnection();
@@ -32,6 +31,35 @@ import java.sql.*;
             close(con, pstmt, null);
         }
 
+    }
+
+    public Member findById(String memberId) throws SQLException {
+        String sql = "select * from member where member_id = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            resultSet = pstmt.executeQuery();
+
+            if(resultSet.next()) {
+                Member member = new Member();
+                member.setMemeberId(resultSet.getString("member_id"));
+                member.setMoney(resultSet.getInt("money"));
+                return member;
+            } else {
+                throw new NoSuchElementException("member not found memberId=" + memberId);
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, resultSet);
+        }
     }
 
     private void close(Connection connection, Statement statement, ResultSet resultSet) {

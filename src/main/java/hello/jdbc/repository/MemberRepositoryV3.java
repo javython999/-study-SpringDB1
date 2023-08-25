@@ -15,7 +15,8 @@ import static org.springframework.jdbc.support.JdbcUtils.*;
  * DataSourceUtils.getConnection()
  * DataSourceUtils.releaseConnection()
  */
-@Slf4j public class MemberRepositoryV3 {
+@Slf4j
+public class MemberRepositoryV3 {
 
     private final DataSource dataSource;
 
